@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="pragma" content="no-cache"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name ="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta charset="utf-8"/>
+
+        <title>Cave Blast by SnoutUp</title>
+	<script src="./sdk/codea.js"></script>
+	<script src="./sdk/sdk.js"></script>
+
+		<script src="html5game/loading.js"></script>   
+		
+		<script>
+			document.addEventListener('touchstart', e => {
+				e.preventDefault();
+				}, {passive: false})
+		</script>			
+		
+        		
+        <!-- Ad Check -->
+        <script>var adsAreDisabled = true;</script>
+        <script src="html5game/prebid/ads.js"></script>   		
+        
+        <style>
+            html {
+                height: 100%;
+                width: 100%;
+            }
+                        
+            body {
+              background: #55536C;
+              color:#cccccc;
+              margin: 0px;
+              padding: 0px;
+              border: 0px;
+			  overflow:hidden;
+              height:100%;
+                
+              background-image: url('html5game/bg.webp');
+              background-repeat: repeat-x;
+              background-position: center center;
+			  background-size:auto 100%;
+            }
+            canvas {
+				image-rendering: optimizeSpeed;
+				-webkit-interpolation-mode: nearest-neighbor;
+				-ms-touch-action: none;
+				margin: 0px;
+				border: 0px;
+				padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+				display:none;				
+            }
+			
+            div.gm4html5_div_class {
+              margin: 0px;
+              padding: 0px;
+              border: 0px;
+            }
+			
+			#scene img, #proc {
+			  -webkit-user-select: none; /* Safari */
+			  -ms-user-select: none; /* IE 10 and IE 11 */
+			  user-select: none; /* Standard syntax */
+			}
+			
+			#scene {
+				position:fixed;
+				top:45%;
+				with:50%;
+			}
+			
+			#scene #shooter {
+				position:fixed;
+				top:35%;
+				left:30%;			
+				-webkit-animation:bounce 1s infinite;
+				
+				z-index:100;
+			}
+			
+			#scene #bullet {
+				position:fixed;
+				top:-100px;
+				left:-100px;	
+				
+				z-index:50;
+			}	
+
+			#scene #hit {
+				position:fixed;
+				top:-100px;
+				left:-100px;	
+				
+				z-index:50;
+				transform: scale(0.1);
+			}
+			
+			#scene #enemy {
+				position:fixed;
+				top:35%;
+				right:30%;
+				-webkit-animation:bounce 1s infinite;
+			}
+			
+			
+			@-webkit-keyframes bounce {
+			  0%       { margin-top:0; }
+			  50%      { margin-top:20px; }
+			  100%     {margin-top:0;}
+			}			
+
+			#bar {
+				position:fixed;
+				top:50%;
+				left:0;
+				right:0;
+				
+				width:50%;				
+				margin:0 auto;
+				padding:4px 6px;
+				height: 50px;
+				
+				border-radius: 20px;
+				
+				background:#5a3a32;
+				z-index:-9999;
+			}
+			
+			#fill {
+				position:relative;
+				width:5%;
+				background-color:#ffffff;
+				height:50px;
+				margin:0px;
+				
+				border-radius: 15px;				
+				
+				background: linear-gradient(
+					to right,
+					#ff0000,#fdcf58
+				);					
+			}
+			
+			#proc {
+				position:fixed;
+				top:50%;
+				width:50%;					
+				text-align:center;				
+				
+				
+				height:50px;
+				line-height:58px;
+				color:#fff;
+				
+				
+				font-size:30px;
+				z-index:100;
+				font-family: 'Tahoma', sans-serif;
+				font-weight:bold;
+				text-shadow: 1px 1px 2px black;
+			}			
+			
+			#fill img {
+				position:absolute;
+				z-index:1;
+				right:-32px;
+				top:-2px;
+			}
+            
+            canvas, #canvas {
+	            -webkit-tap-highlight-color: transparent;
+	            -webkit-touch-callout: none;
+	            -khtml-user-select: none;
+	            -moz-user-select: none;
+	            -ms-user-select: none;
+	            -webkit-user-select: none;	 
+	            user-select: none;		
+
+				z-index:9999;				
+            }        
+        </style>
+    </head>
+
+    <body>
+		<div id ="scene">
+			<img id="shooter" src="html5game/shooter.png"/>
+			<img id="enemy" src="html5game/bat.png"/>
+			<img id="bullet" src="html5game/bullet.png"/>
+			<img id="hit" src="html5game/hit.png"/>
+		</div>
+		<div id="bar"><div id="fill"></div><div id="proc">0%</div></div>
+		<script>loading_start();</script>
+		
+        <div class="gm4html5_div_class" id="gm4html5_div_id">
+            <canvas id="canvas" width="1024" height="576">
+               <p>Your browser doesn't support HTML5 canvas.</p>
+            </canvas>
+			<script type="text/javascript" src="html5game/CaveBlast.js"></script>
+			
+		<script>
+		var sdk 		= PokiSDK;
+		var pokiDebug 	= false;
+        var canvas      = document.getElementById("canvas");
+		
+		var fails		= 0;
+		
+		
+		function poki_log(t) {
+			console.log(t);
+		}
+            
+        function poki_debug() {
+            return pokiDebug;
+        }
+		
+		function poki_loading(progress) {
+			loading_update(progress);
+		}
+
+		window.onload = function() {
+			sdk.init().then(() => {
+                setTimeout(GameMaker_Init, 1);
+                sdk.setDebug(pokiDebug);   
+				sdk.gameLoadingStart();	                
+			}).catch(e => {
+                console.log("ERROR:" + e.message);
+                GameMaker_Init();
+			});
+            
+            canvas.width  = window.innerWidth;
+            canvas.height = window.innerHeight;
+			
+            canvas.addEventListener('click', function(){
+                window.focus();
+            });               
+		}
+		
+		window.addEventListener('wheel', ev => ev.preventDefault(), { passive: false });
+		window.addEventListener('keydown', ev => {
+			if (['ArrowDown', 'ArrowUp', ' '].includes(ev.key)) {
+				ev.preventDefault();
+			}
+		});			
+		</script>			
+        </div>
+    </body>
+</html>
