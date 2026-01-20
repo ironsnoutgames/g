@@ -36,11 +36,11 @@ async function loadFolders(path, containerId) {
 
             const thumb = card.querySelector(".folder-thumb");
 
-                thumb.src = "https://ironsnoutgames-art.github.io/g/"+item.path+"/logo.webp";
+                thumb.src = "https://ironsnoutgames.github.io/g/"+item.path+"/logo.webp";
          
             // Click để copy path
             card.onclick = () => {
-                navigator.clipboard.writeText("https://ironsnoutgames-art.github.io/g/" +item.path);
+                navigator.clipboard.writeText("https://ironsnoutgames.github.io/g/" +item.path);
                 showToast("Đã copy đường dẫn folder!");
             };
 
